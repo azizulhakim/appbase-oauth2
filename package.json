@@ -1,0 +1,23 @@
+{
+  "name": "appbase-oauth2",
+  "version": "1.0.0",
+  "description": "Use OAuth2.0 authentication in appase.io",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.13.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azizulhakim/appbase-oauth2.git"
+  },
+  "author": "Azizul Hakim",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/azizulhakim/appbase-oauth2/issues"
+  },
+  "homepage": "https://github.com/azizulhakim/appbase-oauth2#readme"
+}
