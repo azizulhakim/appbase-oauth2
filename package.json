@@ -4,7 +4,10 @@
   "description": "Use OAuth2.0 authentication in appase.io",
   "main": "index.js",
   "dependencies": {
-    "express": "^4.13.4"
+    "appbase-js": "^0.10.7",
+    "express": "^4.13.4",
+    "passport": "^0.3.2",
+    "passport-facebook": "^2.1.1"
   },
   "devDependencies": {},
   "scripts": {

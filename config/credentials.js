@@ -1,4 +1,11 @@
 module.exports = {
+	'appbaseAuth'	:	{
+		
+		'url'		:	'https://scalr.api.appbase.io',
+		'appName'	:	'APP NAME FROM APPBASE DASHBOARD',
+		'userName'	:	'USER NAME FROM APPBASE DASHBOARD',
+		'password'	:	'PASSWORD FROM APPBASE DASHBOARD'
+	},
 	'facebookAuth' : {
 		'clientID'		: 	'GET YOUR CLIENT ID FROM FACEBOOK',
 		'clientSecret'	:	'GET YOUR CLIENT SECRET FROM FACEBOOK',
