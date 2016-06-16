@@ -41,7 +41,7 @@ module.exports = function(passport){
 				clientID	:	credentials.facebookAuth.clientID,
 				clientSecret:	credentials.facebookAuth.clientSecret,
 				callbackURL	:	credentials.facebookAuth.callbackURL,
-				profileFields: ["emails", "displayName"]
+				profileFields: ["emails", "displayName", "profileUrl", "photos"]
 			},
 			function(token, refreshToken, profile, done){
 				appbaseRef.search({
@@ -57,10 +57,11 @@ module.exports = function(passport){
 					if (response.hits.total === 0){
 						var user = {
 							'facebook'	:	{ 
-								'id'	:	profile.id,
-								'token':	token,
-								'email':	profile.emails[0].value,
-								'name'	:	profile.displayName
+								'id'			:	profile.id,
+								'token'			:	token,
+								'email'			:	profile.emails[0].value,
+								'name'			:	profile.displayName,
+								'profilePic'	:	profile.photos[0].value
 							}
 						};
 								
