@@ -13,6 +13,29 @@ module.exports = function(passport){
 	passport.serializeUser(function(user, done){
 		done(null, user.facebook.id);
 	});
+	
+	passport.deserializeUser(function(id, done){
+		appbaseRef.search({
+			type: 'user',
+			body: {
+				query: {
+					match: {
+						'facebook.id': id
+					}
+				}
+			}
+		}).on('data', function(response) {
+			if (response.hits.total === 0){
+				
+			}
+			else{
+				return done(null, response.hits.hits[0]._source);
+			}
+		}).on('error', function(error) {
+			return done(error, null);
+			
+		});
+	});
 
 	passport.use(new FacebookStrategy({
 				clientID	:	credentials.facebookAuth.clientID,
@@ -32,18 +55,21 @@ module.exports = function(passport){
 					}
 				}).on('data', function(response) {
 					if (response.hits.total === 0){
+						var user = {
+							'facebook'	:	{ 
+								'id'	:	profile.id,
+								'token':	token,
+								'email':	profile.emails[0].value,
+								'name'	:	profile.displayName
+							}
+						};
+								
 						appbaseRef.index({
 							type: 'user',
-							body: {
-								'facebook'	:	{ 
-									'id'	:	profile.id,
-									'token':	token,
-									'email':	profile.emails[0].value,
-									'name'	:	profile.displayName
-								}
-							}
+							body: user
+							
 						}).on('data', function(response){
-							return done(null, response._source)
+							return done(null, user);
 						}).on('error', function(error){
 							return done(error);
 						});
