@@ -5,7 +5,8 @@ var credentials = require('./config/credentials')
 var Appbase = require('appbase-js');
 var Sockbase = require('./js/sockbase');
 var Acl = require('./js/acl');
-
+var appbaseStore = require('connect-appbase')(session);
+var morgan = require('morgan');
 
 var app = express();
 
@@ -19,12 +20,17 @@ var appbaseRef = new Appbase({
 	password: credentials.appbaseAuth.password
 });
 
+app.use(express.static(__dirname));
 require('./js/authentication')(passport);
 
-app.use(session({secret: 'scotchtutorial'}));
+app.use(session( {
+	secret: 'appbaseoauth2', 
+	store: new appbaseStore( { client: appbaseRef } )
+}));
+				
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(__dirname));
+app.use(morgan('dev'));
 
 var wildcard = require('socketio-wildcard');
 var nsp;

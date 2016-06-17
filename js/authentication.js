@@ -11,30 +11,11 @@ var appbaseRef = new Appbase({
 
 module.exports = function(passport){
 	passport.serializeUser(function(user, done){
-		done(null, user.facebook.id);
+		done(null, user);
 	});
 	
-	passport.deserializeUser(function(id, done){
-		appbaseRef.search({
-			type: 'user',
-			body: {
-				query: {
-					match: {
-						'facebook.id': id
-					}
-				}
-			}
-		}).on('data', function(response) {
-			if (response.hits.total === 0){
-				
-			}
-			else{
-				return done(null, response.hits.hits[0]._source);
-			}
-		}).on('error', function(error) {
-			return done(error, null);
-			
-		});
+	passport.deserializeUser(function(user, done){
+		done(null, user);
 	});
 
 	passport.use(new FacebookStrategy({
