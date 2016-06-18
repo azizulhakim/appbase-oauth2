@@ -6,7 +6,11 @@ var Appbase = require('appbase-js');
 var Sockbase = require('./js/sockbase');
 var Acl = require('./js/acl');
 var appbaseStore = require('connect-appbase')(session);
-var morgan = require('morgan');
+var passportSocketIo = require('passport.socketio');
+var cookieParser = require('cookie-parser');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/passport_db');
+var MongoStore = require('connect-mongo')(session);
 
 var app = express();
 
@@ -25,12 +29,21 @@ require('./js/authentication')(passport);
 
 app.use(session( {
 	secret: 'appbaseoauth2', 
-	store: new appbaseStore( { client: appbaseRef } )
+	store: new MongoStore({
+		mongooseConnection:  mongoose.connection
+    })/*new appbaseStore( { client: appbaseRef } )*/
 }));
 				
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(morgan('dev'));
+
+io.use(passportSocketIo.authorize({
+	key				:	'connect.sid',
+	secret			:	'appbaseoauth2',
+	store			:	new MongoStore( { mongooseConnection:  mongoose.connection } ),
+	passport		:	passport,
+	cookieParser	:	cookieParser
+}));
 
 var wildcard = require('socketio-wildcard');
 var nsp;
@@ -64,6 +77,14 @@ var callbacks = {
 	'disconnect': sockbase.onDisconnect.bind(sockbase)
 };
 
+function isLoggedIn(req, res, next){
+	if (req.isAuthenticated()){
+		return next();
+	}
+	
+	res.redirect('/');
+};
+
 io.on('connection', function(socket) {
 	console.log('a user connected');
 
@@ -78,16 +99,11 @@ io.on('connection', function(socket) {
 	sessionCount++;
 
 	socket.on('*', function(msg) {
-		callbacks[msg.data[0]](io, socket, msg.data[1]);
+		isLoggedIn(socket.request, null, function(){
+			callbacks[msg.data[0]](io, socket, msg.data[1]);
+		});
 	});
 });
-
-function isLoggedIn(req, res, next){
-	if (req.isAuthenticated())
-		return next();
-	
-	res.redirect('/');
-};
 
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/view/index.html');
@@ -105,8 +121,10 @@ app.get('/dashboard', isLoggedIn, function(req, res){
 });
 
 app.get('/logout', function(req, res){
-	req.logout();
-	res.redirect('/');
+	
+	req.session.destroy(function(){
+		res.redirect('/');
+	});
 });
 
 http.listen(3000, function() {

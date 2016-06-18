@@ -18,6 +18,12 @@ $(document).ready(function() {
     // lock selection
     $("#user-role").html('<div><h4><span class="glyphicon glyphicon-lock" aria-hidden="true"></span> '+sessionrole+'<span style="font-size:12px;"> '+sessiontext+'</span>'+'</h4></div>')
   })
+  
+  $('[data-toggle="popover"]').popover({html : true,
+    content: function() {
+      return $('#popover_content_wrapper').html();
+    }
+  });
 });
 
 // on post submission
