@@ -27,7 +27,7 @@ Sockbase.prototype.onLogin = function(io, socket, msg){
 				var hits = response.hits.hits;
 
 				hits.forEach(function(element, index, array){
-					//console.log(element);
+					
 					socket.emit('blog_post_approved', element);
 				});
 			}).on('error', function(error) {
@@ -61,6 +61,7 @@ Sockbase.prototype.onSubscribeApproved = function(io, socket, msg){
 				var isDelete = response._deleted;
 
 				if (isDelete == null){
+					
 					socket.emit('blog_post_approved', response);
 				}
 				else{
@@ -104,6 +105,7 @@ Sockbase.prototype.onSubscribePending = function(io, socket, msg){
 				var isDelete = response._deleted;
 
 				if (isDelete == null){
+					console.log(response);
 					socket.emit('blog_post_created', response);
 				}
 				else{
@@ -123,8 +125,9 @@ Sockbase.prototype.onSubscribePending = function(io, socket, msg){
 				}
 			}).on('data', function(response) {
 				var hits = response.hits.hits;
-
+				
 				hits.forEach(function(element, index, array){
+					
 					socket.emit('blog_post_created', element);
 				});
 			}).on('error', function(error) {
@@ -140,6 +143,23 @@ Sockbase.prototype.onSubscribePending = function(io, socket, msg){
 
 Sockbase.prototype.onBlogPost = function(io, socket, msg){
 	var role = msg.role;
+	msg.user = {
+		id	: '',
+		url	: ''
+	}
+	
+	if (socket.request.user.twitter){
+		msg.user = {
+			id : socket.request.user.twitter.name,
+			url: socket.request.user.twitter.profilePic
+		};
+	}
+	else{
+		msg.user = {
+			id : socket.request.user.facebook.name,
+			url: socket.request.user.facebook.profilePic
+		};
+	}
 
 	var self = this;
 	this.acl.isAllowed(role, TABLE_PENDING_POST, 'write', function(result){

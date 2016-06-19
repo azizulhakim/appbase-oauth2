@@ -73,13 +73,21 @@ socket.on('blog_post_approved', function(response) {
   if ($("#" + id).length) {
     $('#' + id).remove();
   }
+  
+  var img = document.createElement('img');
+  img.className = 'img-circle';
+  img.alt = 'Cinque Terre';
+  img.height = 25;
+  img.width = 25;
+  img.src = msg.user.url;
 
   // add the new post as a <li>
   var li = document.createElement('li');
   li.className = 'list-group-item';
   li.id = id;
+  li.appendChild(img);
   li.appendChild(document.createTextNode(text));
-
+  
   // add a "disapprove" label
   var iDiv = document.createElement('span');
   iDiv.className = 'dashboard-post label label-warning';
@@ -109,10 +117,25 @@ socket.on('blog_post_created', function(response) {
   if ($("#" + id).length) {
     $('#' + id).remove();
   }
+  
+  var img = document.createElement('img');
+  img.className = 'img-circle';
+  img.alt = 'Cinque Terre';
+  img.height = 25;
+  img.width = 25;
+  img.src = msg.user.url;
+
+  
+  var li = document.createElement('li');
+  li.className = 'list-group-item';
+  li.id = id;
+  li.appendChild(img);
+  li.appendChild(document.createTextNode(text));
 
   var li = document.createElement('li');
   li.className = 'list-group-item';
   li.id = id;
+  li.appendChild(img);
   li.appendChild(document.createTextNode(text));
 
   // add a "publish" action label

@@ -116,6 +116,13 @@ app.get('/auth/facebook/callback', passport.authenticate('facebook', {
 	failureRedirect	:	'/'
 }));
 
+app.get('/auth/twitter', passport.authenticate('twitter'));
+
+app.get('/auth/twitter/callback', passport.authenticate('twitter', {
+	successRedirect	:	'/dashboard',
+	failureRedirect	:	'/'
+}));
+
 app.get('/dashboard', isLoggedIn, function(req, res){
 	res.sendFile(__dirname + '/view/dashboard.html');
 });
