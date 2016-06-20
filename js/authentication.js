@@ -76,7 +76,6 @@ module.exports = function(passport){
 			callbackURL		:	credentials.twitterAuth.callbackURL
 		}, 
 		function(token, refreshToken, profile, done){
-			console.log(profile);
 			appbaseRef.search({
 				type: 'user',
 				body: {

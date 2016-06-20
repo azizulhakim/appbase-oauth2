@@ -24,6 +24,7 @@ var appbaseRef = new Appbase({
 	password: credentials.appbaseAuth.password
 });
 
+app.set('view engine', 'ejs');
 app.use(express.static(__dirname));
 require('./js/authentication')(passport);
 
@@ -106,7 +107,7 @@ io.on('connection', function(socket) {
 });
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '/view/index.html');
+	res.render('index.ejs');
 });
 
 app.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
@@ -124,7 +125,22 @@ app.get('/auth/twitter/callback', passport.authenticate('twitter', {
 }));
 
 app.get('/dashboard', isLoggedIn, function(req, res){
-	res.sendFile(__dirname + '/view/dashboard.html');
+	if (req.user.facebook){
+		res.render('dashboard.ejs', {
+			user : {
+				name : req.user.facebook.name,
+				profilePic : req.user.facebook.profilePic
+			}
+		});
+	}
+	else{
+		res.render('dashboard.ejs', {
+			user : {
+				name : req.user.twitter.name,
+				profilePic : req.user.twitter.profilePic
+			}
+		});
+	}
 });
 
 app.get('/logout', function(req, res){

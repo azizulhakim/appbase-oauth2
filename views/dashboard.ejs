@@ -4,6 +4,8 @@
 <head>
   <title>Appbase.io + Socket.io</title>
 
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
   <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
 
   <style>
@@ -53,7 +55,7 @@
 		<div class="col-md-1">
 			<h2>
 			<a href="#" data-toggle="popover" data-placement="bottom">
-			<img src="http://www.w3schools.com/bootstrap/cinqueterre.jpg" class="img-circle" alt="Cinque Terre" width="40" height="40">
+			<img src="<%= user.profilePic %>" class="img-circle" alt="Cinque Terre" width="50" height="50">
 			</a>
 			<div id="popover_content_wrapper" style="display: none">
 			  <a href="logout">Sign Out</a>
