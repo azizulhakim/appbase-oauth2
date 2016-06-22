@@ -1,3 +1,6 @@
+<!doctype html>
+<html>
+
 <head>
     <title>AppbaseOAuth2</title>
 	
@@ -8,19 +11,28 @@
         body        { padding-top:80px; }
     </style>
 </head>
+
+
 <body>
 	<div class="container">
 
 		<div class="jumbotron text-center">
 			<h1><span class="fa fa-lock"></span>Appbase + OAuth2</h1>
+			
+			<form action="/login" method="post" enctype="application/x-www-form-urlencoded">
+				<select class="form-control" name="role">
+					<option value="admin">admin</option>
+					<option value="user">user</option>
+					<option value="guest">guest</option>
+				</select>
 
-			<p>Login or Register with:</p>
-
-			<a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a>
-			<a href="/auth/twitter" class="btn btn-info"><span class="fa fa-twitter"></span> Twitter</a>
-
+				<p>Login or Register with:</p>
+				<button type="submit" name="action" value="facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</button>
+				<button type="submit" name="action" value="twitter" class="btn btn-info"><span class="fa fa-twitter"></span> Twitter</button>
+			</form>
 		</div>
 
 	</div>
 </body>
+
 </html>  

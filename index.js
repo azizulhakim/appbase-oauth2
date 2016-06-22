@@ -11,6 +11,7 @@ var cookieParser = require('cookie-parser');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/passport_db');
 var MongoStore = require('connect-mongo')(session);
+var bodyParser = require("body-parser");
 
 var app = express();
 
@@ -24,6 +25,8 @@ var appbaseRef = new Appbase({
 	password: credentials.appbaseAuth.password
 });
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); 
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname));
 require('./js/authentication')(passport);
@@ -108,6 +111,18 @@ io.on('connection', function(socket) {
 
 app.get('/', function(req, res){
 	res.render('index.ejs');
+});
+
+app.post('/login', function(req, res, next){
+	console.log(req.body);
+	req.session.role = req.body.role;
+	
+	if (req.body.action === 'facebook'){
+		passport.authenticate('facebook', { scope : 'email' })(req, res, next);
+	}
+	else if (req.body.action === 'twitter'){
+		passport.authenticate('twitter', { scope : 'email' })(req, res, next);
+	}
 });
 
 app.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
