@@ -12,12 +12,34 @@ function Sockbase(appbaseRef, acl){
 	this.acl = acl;
 }
 
-Sockbase.prototype.onLogin = function(io, socket, msg){
+Sockbase.prototype.onLogin = function(io, socket, p){
+	var msg = socket.request.user;
+	//console.log(msg);
 	var role = msg.role;
 	var self = this;
 
 	self.appbaseRef.search({
-				type: TABLE_APPROVED_POST,
+		type: TABLE_APPROVED_POST,
+		body: {
+			query: {
+				match_all: {}
+			}
+		}
+	}).on('data', function(response) {
+		var hits = response.hits.hits;
+
+		hits.forEach(function(element, index, array){
+			
+			socket.emit('blog_post_approved', element);
+		});
+	}).on('error', function(error) {
+		console.log("caught a searchStream() error: ", error)
+	});
+			
+	this.acl.isAllowed(role, TABLE_PENDING_POST, 'read', function(result){
+		if (result){
+			self.appbaseRef.search({
+				type: TABLE_PENDING_POST,
 				body: {
 					query: {
 						match_all: {}
@@ -25,14 +47,16 @@ Sockbase.prototype.onLogin = function(io, socket, msg){
 				}
 			}).on('data', function(response) {
 				var hits = response.hits.hits;
-
+				
 				hits.forEach(function(element, index, array){
 					
-					socket.emit('blog_post_approved', element);
+					socket.emit('blog_post_created', element);
 				});
 			}).on('error', function(error) {
 				console.log("caught a searchStream() error: ", error)
 			});
+		}
+	});
 }
 
 Sockbase.prototype.onSubscribeApproved = function(io, socket, msg){

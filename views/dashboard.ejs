@@ -73,10 +73,9 @@
       <div class="col-md-10">
         <div id="user-role">
           <select class="form-control" name="role">
-            <option value="none">none</option>
-            <option value="admin">admin</option>
-            <option value="user">user</option>
-            <option value="guest">guest</option>
+            <option <% if (user.role === 'admin') { %> selected="selected" <% } %> value="admin">admin</option>
+            <option <% if (user.role === 'user') { %> selected="selected" <% } %> value="user">user</option>
+            <option <% if (user.role === 'guest') { %> selected="selected" <% } %> value="guest">guest</option>
           </select>
         </div>
       </div>

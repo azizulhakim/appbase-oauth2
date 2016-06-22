@@ -114,7 +114,6 @@ app.get('/', function(req, res){
 });
 
 app.post('/login', function(req, res, next){
-	console.log(req.body);
 	req.session.role = req.body.role;
 	
 	if (req.body.action === 'facebook'){
@@ -140,11 +139,36 @@ app.get('/auth/twitter/callback', passport.authenticate('twitter', {
 }));
 
 app.get('/dashboard', isLoggedIn, function(req, res){
+	req.user.role = req.session.role;
+	
+	var client = {};
 	if (req.user.facebook){
+		client = {
+			user : {
+				name : req.user.facebook.name,
+				profilePic : req.user.facebook.profilePic,
+				role : req.user.role
+			}
+		};
+	}
+	else{
+		client = {
+			user : {
+				name : req.user.twitter.name,
+				profilePic : req.user.twitter.profilePic,
+				role : req.user.role
+			}
+		};
+	}
+	
+	res.render('dashboard.ejs', client);
+	
+	/*if (req.user.facebook){
 		res.render('dashboard.ejs', {
 			user : {
 				name : req.user.facebook.name,
-				profilePic : req.user.facebook.profilePic
+				profilePic : req.user.facebook.profilePic,
+				role : req.user.role
 			}
 		});
 	}
@@ -152,10 +176,11 @@ app.get('/dashboard', isLoggedIn, function(req, res){
 		res.render('dashboard.ejs', {
 			user : {
 				name : req.user.twitter.name,
-				profilePic : req.user.twitter.profilePic
+				profilePic : req.user.twitter.profilePic,
+				role : req.user.role
 			}
 		});
-	}
+	}*/
 });
 
 app.get('/logout', function(req, res){
