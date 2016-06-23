@@ -60,7 +60,7 @@ Sockbase.prototype.onLogin = function(io, socket, p){
 }
 
 Sockbase.prototype.onSubscribeApproved = function(io, socket, msg){
-	var role = msg.role;
+	var role = socket.request.user.role;
 
 	var self = this;
 	this.acl.isAllowed(role, TABLE_APPROVED_POST, 'read', function(result){
@@ -74,7 +74,7 @@ Sockbase.prototype.onSubscribeApproved = function(io, socket, msg){
 			// broadcast the subscription state
 			io.emit('subscribe_publish_count', subscribe_publish_count + subscribers);
 
-			self.appbaseRef.searchStream({
+			socket.approvedSearchStream = self.appbaseRef.searchStream({
 				type: TABLE_APPROVED_POST,
 				body: {
 					query: {
@@ -103,7 +103,7 @@ Sockbase.prototype.onSubscribeApproved = function(io, socket, msg){
 };
 
 Sockbase.prototype.onSubscribePending = function(io, socket, msg){
-	var role = msg.role;
+	var role = socket.request.user.role;
 
 	var self = this;
 	this.acl.isAllowed(role, TABLE_PENDING_POST, 'read', function(result){
@@ -118,7 +118,7 @@ Sockbase.prototype.onSubscribePending = function(io, socket, msg){
 			// broadcast the subscription state
 			io.emit('subscribe_pending_count', subscribe_pending_count + subscribers);
 
-			self.appbaseRef.searchStream({
+			socket.pendingSearchStream = self.appbaseRef.searchStream({
 				type: TABLE_PENDING_POST,
 				body: {
 					query: {
@@ -166,7 +166,7 @@ Sockbase.prototype.onSubscribePending = function(io, socket, msg){
 };
 
 Sockbase.prototype.onBlogPost = function(io, socket, msg){
-	var role = msg.role;
+	var role = socket.request.user.role;
 	msg.user = {
 		id	: '',
 		url	: ''
@@ -211,7 +211,7 @@ Sockbase.prototype.onBlogPost = function(io, socket, msg){
 };
 
 Sockbase.prototype.onApprovePost = function(io, socket, msg){
-	var role = msg.role;
+	var role = socket.request.user.role;
 	var id = msg.id;
 	var self = this;
 
@@ -262,7 +262,7 @@ Sockbase.prototype.onApprovePost = function(io, socket, msg){
 };
 
 Sockbase.prototype.onDisapprovePost = function(io, socket, msg){
-	var role = msg.role;
+	var role = socket.request.user.role;
 	var id = msg.id;
 	var self = this;
 
@@ -314,7 +314,7 @@ Sockbase.prototype.onDisapprovePost = function(io, socket, msg){
 };
 
 Sockbase.prototype.onDeletePost = function(io, socket, msg){
-	var role = msg.role;
+	var role = socket.request.user.role;
 	var id = msg.id;
 	var type = msg.type;
 	var self = this;
@@ -344,8 +344,23 @@ Sockbase.prototype.onDeletePost = function(io, socket, msg){
 		}
 	});
 };
+
+Sockbase.prototype.onUpdateRole = function(io, socket, msg){
+	console.log('update role from ' + socket.request.user.role + ' to ' + msg.role);
+	if (socket.approvedSearchStream) socket.approvedSearchStream.stop();
+	if (socket.pendingSearchStream) socket.pendingSearchStream.stop();
+	
+	socket.request.user.role = msg.role;
+	this.onLogin(io, socket, null);
+};
+
 Sockbase.prototype.onDisconnect = function(io, socket, msg){
 	console.log('a user disconnected');
 };
+
+Sockbase.prototype.onLogout = function(io, socket, msg){
+	if (socket.approvedSearchStream) socket.approvedSearchStream.stop();
+	if (socket.pendingSearchStream) socket.pendingSearchStream.stop();
+}
 
 module.exports = Sockbase;

@@ -78,6 +78,7 @@ var callbacks = {
 	'approve_pending': sockbase.onApprovePost.bind(sockbase),
 	'move_to_pending': sockbase.onDisapprovePost.bind(sockbase),
 	'delete_post': sockbase.onDeletePost.bind(sockbase),
+	'update_role': sockbase.onUpdateRole.bind(sockbase),
 	'disconnect': sockbase.onDisconnect.bind(sockbase)
 };
 
@@ -184,6 +185,8 @@ app.get('/dashboard', isLoggedIn, function(req, res){
 });
 
 app.get('/logout', function(req, res){
+	
+	console.log(req._passport);
 	
 	req.session.destroy(function(){
 		res.redirect('/');

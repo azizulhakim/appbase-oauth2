@@ -5,11 +5,12 @@ var socket = io();
 /* selector functions to interact with the HTML and server via socket.io */
 $(document).ready(function() {
   socket.emit('loggedin', null);
+  
   // when user picks a role
   $("select").on("change", function() {
     sessionrole = $("select option:selected").text()
-    socket.emit('loggedin', {"role": sessionrole});
-    var sessiontext = "";
+    //socket.emit('loggedin', {"role": sessionrole});
+    
     if (sessionrole === "admin")
       sessiontext = " As an admin, you can create new post submissions and moderate posts by other admins, users and guests."
     else if (sessionrole === "user")
@@ -17,7 +18,11 @@ $(document).ready(function() {
     else if (sessionrole === "guest")
       sessiontext = " As a guest viewer, you can create new post submissions and see published posts."
     // lock selection
-    $("#user-role").html('<div><h4><span class="glyphicon glyphicon-lock" aria-hidden="true"></span> '+sessionrole+'<span style="font-size:12px;"> '+sessiontext+'</span>'+'</h4></div>')
+    //$("#user-role").html('<div><h4><span class="glyphicon glyphicon-lock" aria-hidden="true"></span> '+sessionrole+'<span style="font-size:12px;"> '+sessiontext+'</span>'+'</h4></div>')
+	
+	$("#all_posts").empty();
+	$("#all_published_posts").empty();
+	socket.emit('update_role', {"role": sessionrole});
   })
   
   $('[data-toggle="popover"]').popover({html : true,
