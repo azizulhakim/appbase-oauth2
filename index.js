@@ -82,7 +82,9 @@ var callbacks = {
 	'disconnect': sockbase.onDisconnect.bind(sockbase)
 };
 
-function isLoggedIn(req, res, next){
+var clientSockets = {};
+
+function isLoggedIn(req, res, next){	
 	if (req.isAuthenticated()){
 		return next();
 	}
@@ -92,6 +94,8 @@ function isLoggedIn(req, res, next){
 
 io.on('connection', function(socket) {
 	console.log('a user connected');
+	
+	clientSockets[socket.request.sessionID] = socket;
 
 	var middleware = wildcard();
 	nsp = io.of('/sockbase');
@@ -104,8 +108,18 @@ io.on('connection', function(socket) {
 	sessionCount++;
 
 	socket.on('*', function(msg) {
+		
+		
 		isLoggedIn(socket.request, null, function(){
-			callbacks[msg.data[0]](io, socket, msg.data[1]);
+			if (clientSockets[socket.request.sessionID]){
+				callbacks[msg.data[0]](io, socket, msg.data[1]);
+			}
+			else{
+				sockbase.onLogout(io, socket, null);
+				socket.emit('failure', 'you are logged out');
+				socket.disconnect();
+				console.log('disconnect');
+			}
 		});
 	});
 });
@@ -141,6 +155,10 @@ app.get('/auth/twitter/callback', passport.authenticate('twitter', {
 
 app.get('/dashboard', isLoggedIn, function(req, res){
 	req.user.role = req.session.role;
+	
+	if (clientSockets[req.sessionID]){
+		clientSockets[req.sessionID] = null;
+	}
 	
 	var client = {};
 	if (req.user.facebook){
@@ -186,7 +204,12 @@ app.get('/dashboard', isLoggedIn, function(req, res){
 
 app.get('/logout', function(req, res){
 	
-	console.log(req._passport);
+	console.log('logout');
+	
+	var socket = clientSockets[req.sessionID];
+	if (socket){
+		delete clientSockets[req.sessionID];
+	}
 	
 	req.session.destroy(function(){
 		res.redirect('/');
