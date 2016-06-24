@@ -1,0 +1,29 @@
+{
+  "name": "appbase-oauth2",
+  "description": "Interfacing Appbase.io with Socket.io & OAuth2",
+  "main": "index.js",
+  "authors": [
+    "Azizul Hakim"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "appbase.io",
+    "socket.io",
+	"OAuth2",
+    "ACL",
+    "security"
+  ],
+  "homepage": "https://github.com/azizulhakim/appbase-oauth2",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6"
+  }
+}

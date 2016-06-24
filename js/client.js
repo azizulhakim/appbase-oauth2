@@ -4,7 +4,6 @@ var socket = io();
 
 /* selector functions to interact with the HTML and server via socket.io */
 $(document).ready(function() {
-  socket.emit('loggedin', null);
   
   // when user picks a role
   $("select").on("change", function() {

@@ -5,11 +5,10 @@ var credentials = require('./config/credentials')
 var Appbase = require('appbase-js');
 var Sockbase = require('./js/sockbase');
 var Acl = require('./js/acl');
-var appbaseStore = require('connect-appbase')(session);
+//var appbaseStore = require('connect-appbase')(session);
 var passportSocketIo = require('passport.socketio');
 var cookieParser = require('cookie-parser');
 var mongoose = require('mongoose');
-mongoose.connect(credentials.mongodb.url);
 var MongoStore = require('connect-mongo')(session);
 var bodyParser = require("body-parser");
 
@@ -31,11 +30,14 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname));
 require('./js/authentication')(passport);
 
+
+mongoose.connect(credentials.mongodb.url);
+var sessionStore = new MongoStore({	mongooseConnection:  mongoose.connection });
+//var sessionStore = new appbaseStore( { client: appbaseRef } );
+
 app.use(session( {
 	secret: 'appbaseoauth2', 
-	store: new MongoStore({
-		mongooseConnection:  mongoose.connection
-    })/*new appbaseStore( { client: appbaseRef } )*/
+	store: sessionStore
 }));
 				
 app.use(passport.initialize());
@@ -44,7 +46,7 @@ app.use(passport.session());
 io.use(passportSocketIo.authorize({
 	key				:	'connect.sid',
 	secret			:	'appbaseoauth2',
-	store			:	new MongoStore( { mongooseConnection:  mongoose.connection } ),
+	store			:	sessionStore,
 	passport		:	passport,
 	cookieParser	:	cookieParser
 }));
@@ -107,9 +109,10 @@ io.on('connection', function(socket) {
 	io.to(sessionId).emit('joined', sessionId);
 	sessionCount++;
 
+	sockbase.onLogin(io, socket, null);
+	
 	socket.on('*', function(msg) {
-		
-		
+				
 		isLoggedIn(socket.request, null, function(){
 			if (clientSockets[socket.request.sessionID]){
 				callbacks[msg.data[0]](io, socket, msg.data[1]);
@@ -181,25 +184,6 @@ app.get('/dashboard', isLoggedIn, function(req, res){
 	}
 	
 	res.render('dashboard.ejs', client);
-	
-	/*if (req.user.facebook){
-		res.render('dashboard.ejs', {
-			user : {
-				name : req.user.facebook.name,
-				profilePic : req.user.facebook.profilePic,
-				role : req.user.role
-			}
-		});
-	}
-	else{
-		res.render('dashboard.ejs', {
-			user : {
-				name : req.user.twitter.name,
-				profilePic : req.user.twitter.profilePic,
-				role : req.user.role
-			}
-		});
-	}*/
 });
 
 app.get('/logout', function(req, res){
