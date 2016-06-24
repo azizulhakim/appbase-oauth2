@@ -15,5 +15,8 @@ module.exports = {
 		'consumerKey'	:	'GET YOUR CONSUMER KEY FROM TWITTER',
 		'consumerSecret':	'GET YOUR CONSUMER SECRET FROM TWITTER',
 		'callbackURL'	:	'http://localhost:3000/auth/twitter/callback'
+	},
+	'mongodb'	:	{
+		'url'			:	'YOUR MONGODB URL'
 	}
 };

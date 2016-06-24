@@ -9,7 +9,7 @@ var appbaseStore = require('connect-appbase')(session);
 var passportSocketIo = require('passport.socketio');
 var cookieParser = require('cookie-parser');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/passport_db');
+mongoose.connect(credentials.mongodb.url);
 var MongoStore = require('connect-mongo')(session);
 var bodyParser = require("body-parser");
 
