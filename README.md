@@ -17,7 +17,14 @@ bower install
 node data_init.js
 ```
 
-Next we can run our application. We can use either appbase or mongodb as our session store.
-Start the application with ```node index.js``` to use mongodb as session store or ```node index.js appbase``` to use appbase as session store. In the latter case, you have to add [connect-appbase](https://github.com/azizulhakim/connect-appbase) inside your node_modules folder.
+Now we can use either appbase or mongodb as our session store.
+
+To use mongodb as session store, run the application with following command
+
+```node index.js``` 
+
+To use appbase as session store, first download [connect-appbase](https://github.com/azizulhakim/connect-appbase) inside your **node_modules** folder and then run the application with following command.
+
+```node index.js appbase```
 
 Server will start running at [http://localhost:3000/](http://localhost:3000/)
