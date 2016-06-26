@@ -23,7 +23,7 @@ To use mongodb as session store, run the application with following command
 
 ```node index.js``` 
 
-To use appbase as session store, first download [connect-appbase](https://github.com/azizulhakim/connect-appbase) inside your **node_modules** folder and then run the application with following command.
+To use appbase as session store, run the application with following command.
 
 ```node index.js appbase```
 
