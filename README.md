@@ -15,7 +15,9 @@ Update the ```config/credentials.js``` file with your facebook, twitter, appbase
 npm install
 bower install
 node data_init.js
-node index.js
 ```
+
+Next we can run our application. We can use either appbase or mongodb as our session store.
+Start the application with ```node index.js``` to use mongodb as session store or ```node index.js appbase``` to use appbase as session store. In the latter case, you have to add [connect-appbase](https://github.com/azizulhakim/connect-appbase) inside your node_modules folder.
 
 Server will start running at [http://localhost:3000/](http://localhost:3000/)

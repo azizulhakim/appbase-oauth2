@@ -5,11 +5,9 @@ var credentials = require('./config/credentials')
 var Appbase = require('appbase-js');
 var Sockbase = require('./js/sockbase');
 var Acl = require('./js/acl');
-//var appbaseStore = require('connect-appbase')(session);
 var passportSocketIo = require('passport.socketio');
 var cookieParser = require('cookie-parser');
 var mongoose = require('mongoose');
-var MongoStore = require('connect-mongo')(session);
 var bodyParser = require("body-parser");
 
 var app = express();
@@ -31,8 +29,22 @@ app.use(express.static(__dirname));
 require('./js/authentication')(passport);
 
 
-mongoose.connect(credentials.mongodb.url);
-var sessionStore = new MongoStore({	mongooseConnection:  mongoose.connection });
+var sessionStore = null;
+if (process.argv[2] === 'appbase'){
+	console.log('using appbase.io as session store');
+	var appbaseStore = require('connect-appbase')(session);
+	sessionStore = new appbaseStore( { client: appbaseRef } );
+}
+else{
+	console.log('using mongodb as session store');
+	mongoose.connect(credentials.mongodb.url);
+	var MongoStore = require('connect-mongo')(session);	
+	sessionStore = new MongoStore({	mongooseConnection:  mongoose.connection });
+}
+
+
+
+//var sessionStore = new MongoStore({	mongooseConnection:  mongoose.connection });
 //var sessionStore = new appbaseStore( { client: appbaseRef } );
 
 app.use(session( {
